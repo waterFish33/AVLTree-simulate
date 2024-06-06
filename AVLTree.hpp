@@ -6,21 +6,21 @@ struct AVLTreeNode
 {
 	AVLTreeNode(const T& data = T())
 		: _pLeft(nullptr)
-		, _pRight(nullptr)
-		, _pParent(nullptr)
-		, _data(data)
-		, _bf(0)
+		ï¼Œ _pRight(nullptr)
+		ï¼Œ _pParent(nullptr)
+		ï¼Œ _data(data)
+		ï¼Œ _bf(0)
 	{}
 
 	AVLTreeNode<T>* _pLeft;
 	AVLTreeNode<T>* _pRight;
 	AVLTreeNode<T>* _pParent;
 	T _data;
-	int _bf;   // ½ÚµãµÄÆ½ºâÒò×Ó
+	int _bf;   // èŠ‚ç‚¹çš„å¹³è¡¡å› å­
 };
 
 
-// AVL: ¶ş²æËÑË÷Ê÷ + Æ½ºâÒò×ÓµÄÏŞÖÆ
+// AVL: äºŒå‰æœç´¢æ ‘ + å¹³è¡¡å› å­çš„é™åˆ¶
 template<class T>
 class AVLTree
 {
@@ -30,13 +30,13 @@ public:
 		: _pRoot(nullptr)
 	{}
 
-	// ÔÚAVLÊ÷ÖĞ²åÈëÖµÎªdataµÄ½Úµã
+	// åœ¨AVLæ ‘ä¸­æ’å…¥å€¼ä¸ºdataçš„èŠ‚ç‚¹
 	bool Insert(const T& data) {
-		if (_pRoot == nullptr) {	//Èç¹û¸ù½ÚµãÎª¿Õ£¬Ö±½ÓÔÚ¸ù½Úµã²åÈë
+		if (_pRoot == nullptr) {	//å¦‚æœæ ¹èŠ‚ç‚¹ä¸ºç©ºï¼Œç›´æ¥åœ¨æ ¹èŠ‚ç‚¹æ’å…¥
 			_pRoot = new Node(data);
 			return true;
 		}
-		else {						//Ä¬ÈÏÖĞĞò±éÀúÎªÉıĞò£¬±È½ÚµãĞ¡Íù×óÊ÷×ß£¬±È½ÚµãĞ¡ÍùÓÒÊ÷×ß
+		else {						//é»˜è®¤ä¸­åºéå†ä¸ºå‡åºï¼Œæ¯”èŠ‚ç‚¹å°å¾€å·¦æ ‘èµ°ï¼Œæ¯”èŠ‚ç‚¹å°å¾€å³æ ‘èµ°
 			Node* parent = nullptr;
 			Node* cur = _pRoot;
 			while (cur) {
@@ -61,7 +61,7 @@ public:
 				parent->_pRight = cur;
 				cur->_pParent = parent;
 			}
-			//²åÈëĞÂ½Úµãºó¶Ô½Úµã½øĞĞÆ½ºâÒò×ÓµÄµ÷Õû
+			//æ’å…¥æ–°èŠ‚ç‚¹åå¯¹èŠ‚ç‚¹è¿›è¡Œå¹³è¡¡å› å­çš„è°ƒæ•´
 			while (parent) {
 				if (cur == parent->_pLeft) {
 					parent->_bf--;
@@ -73,7 +73,7 @@ public:
 					break;
 				}
 
-				//µ÷ÕûÒ»´Îºó½øĞĞÅĞ¶Ï£¬ÊÇ·ñÒª½øĞĞÆ½ºâ
+				//è°ƒæ•´ä¸€æ¬¡åè¿›è¡Œåˆ¤æ–­ï¼Œæ˜¯å¦è¦è¿›è¡Œå¹³è¡¡
 				if (parent->_bf == 1 || parent->_bf == -1) {
 					cur = parent;
 					parent = parent->_pParent;
@@ -105,7 +105,7 @@ public:
 	}
 
 
-	// AVLÊ÷µÄÑéÖ¤
+	// AVLæ ‘çš„éªŒè¯
 	bool IsAVLTree()
 	{
 		return _IsAVLTree(_pRoot);
@@ -114,7 +114,7 @@ public:
 		return _Height(_pRoot);
 	}
 private:
-	// ¸ù¾İAVLÊ÷µÄ¸ÅÄîÑéÖ¤pRootÊÇ·ñÎªÓĞĞ§µÄAVLÊ÷
+	// æ ¹æ®AVLæ ‘çš„æ¦‚å¿µéªŒè¯pRootæ˜¯å¦ä¸ºæœ‰æ•ˆçš„AVLæ ‘
 	bool _IsAVLTree(Node* pRoot) {
 		if (pRoot == nullptr) {
 			return true;
@@ -133,7 +133,7 @@ private:
 		size_t r = _Height(pRoot->_pRight) + 1;
 		return l > r ? l : r;
 	}
-	// ÓÒµ¥Ğı
+	// å³å•æ—‹
 	void RotateR(Node* pParent) {
 		Node* cur = pParent->_pLeft;
 		Node* curR = cur->_pRight;
@@ -149,15 +149,20 @@ private:
 		}
 		else {
 			cur->_pParent = pParent->_pParent;
-			cur->_pParent->_pLeft = cur;
+			if (grandf->_parent->_left == grandf) {
+				grandf->_parent->_left = parent;
+			}
+			else if (grandf->_parent->_right == grandf) {
+				grandf->_parent->_right = parent;
+			}
 		}
 		pParent->_pParent = cur;
 		
-		//Ğı×ªºó£¬µ÷ÕûÆ½ºâÒò×Ó
+		//æ—‹è½¬åï¼Œè°ƒæ•´å¹³è¡¡å› å­
 		cur->_bf = 0;
 		pParent->_bf = 0;
 	}
-	// ×óµ¥Ğı
+	// å·¦å•æ—‹
 	void RotateL(Node* pParent) {
 		Node* cur = pParent->_pRight;
 		Node* curL = cur->_pLeft;
@@ -173,15 +178,20 @@ private:
 		}
 		else {
 			cur->_pParent = pParent->_pParent;
-			cur->_pParent->_pRight = cur;
+			if (grandf->_parent->_left == grandf) {
+				grandf->_parent->_left = parent;
+			}
+			else if (grandf->_parent->_right == grandf) {
+				grandf->_parent->_right = parent;
+			}
 		}
 		pParent->_pParent = cur;
 		
-		//Ğı×ªºó£¬µ÷ÕûÆ½ºâÒò×Ó
+		//æ—‹è½¬åï¼Œè°ƒæ•´å¹³è¡¡å› å­
 		cur->_bf = 0;
 		pParent->_bf = 0;
 	}
-	// ÓÒ×óË«Ğı
+	// å³å·¦åŒæ—‹
 	void RotateRL(Node* pParent) {
 
 		Node* parent = pParent;
@@ -205,7 +215,7 @@ private:
 			cur->_bf = 0;
 		}
 	}
-	// ×óÓÒË«Ğı
+	// å·¦å³åŒæ—‹
 	void RotateLR(Node* pParent) {
 		Node* parent = pParent;
 		Node* cur = pParent->_pLeft;
